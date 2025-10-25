@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: diplom-back
+
+  mvc:
+    servlet:
+      path: /api/v1
+
+  boot:
+    admin:
+      client:
+        url: http://host.docker.internal:9090
+
+  security:
+    user:
+      name: ${SPRING_ADMIN_USERNAME}
+      password: ${SPRING_ADMIN_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+
+logging:
+  level:
+    root: debug
+  file:
+    name: diplom.log
+
+server:
+  port: 8080
