@@ -29,6 +29,8 @@ public class User {
     private Date createdAt = new Date();
     private String avatarUrl;
     private String backgroundUrl;
+
+    @Column(columnDefinition = "TEXT")
     private String biography = "";
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

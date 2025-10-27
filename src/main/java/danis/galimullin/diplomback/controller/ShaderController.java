@@ -1,8 +1,7 @@
 package danis.galimullin.diplomback.controller;
 
-import danis.galimullin.diplomback.dto.shader.ShaderCreateDto;
+import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
-import danis.galimullin.diplomback.model.Shader;
 import danis.galimullin.diplomback.service.ShaderService;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,7 @@ public class ShaderController {
     }
 
     @GetMapping("/{id}")
-    public ShaderResponseDto getShader(@PathVariable Long id) {
+    public ShaderResponseDto getShaderById(@PathVariable Long id) {
         return shaderService.getShaderById(id);
     }
 
@@ -28,14 +27,19 @@ public class ShaderController {
         return shaderService.getAllShaders();
     }
 
-//    @GetMapping
+    //    @GetMapping
 //    public List<ShaderResponseDto> getAllVisibleShaders() {
 //        return shaderService.getALlVisibleShaders();
 //    }
 //
     @PostMapping
-    public Shader save(@RequestBody ShaderCreateDto shader) {
+    public ShaderResponseDto save(@RequestBody ShaderUpsertDto shader) {
         return shaderService.saveShader(shader);
+    }
+
+    @PutMapping("/{id}")
+    public ShaderResponseDto save(@PathVariable Long id, @RequestBody ShaderUpsertDto shader) {
+        return shaderService.saveShader(id, shader);
     }
 
     @PatchMapping("/{id}")

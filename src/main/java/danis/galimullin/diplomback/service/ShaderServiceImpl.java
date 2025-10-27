@@ -1,16 +1,15 @@
 package danis.galimullin.diplomback.service;
 
-import danis.galimullin.diplomback.dto.shader.ShaderCreateDto;
+import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
 import danis.galimullin.diplomback.exception.ResourceNotFoundException;
+import danis.galimullin.diplomback.mapper.ShaderMapper;
 import danis.galimullin.diplomback.model.Shader;
-import danis.galimullin.diplomback.model.User;
 import danis.galimullin.diplomback.repository.ShaderRepository;
 import danis.galimullin.diplomback.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,24 +18,26 @@ import java.util.stream.Collectors;
 public class ShaderServiceImpl implements ShaderService {
     private final ShaderRepository shaderRepository;
     private final UserRepository userRepository;
+    private final ShaderMapper shaderMapper;
 
-    public ShaderServiceImpl(ShaderRepository shaderRepository, UserRepository userRepository) {
+    public ShaderServiceImpl(ShaderRepository shaderRepository, UserRepository userRepository, ShaderMapper shaderMapper) {
         this.shaderRepository = shaderRepository;
         this.userRepository = userRepository;
+        this.shaderMapper = shaderMapper;
     }
 
     @Override
     public List<ShaderResponseDto> getALlVisibleShaders() {
         return shaderRepository
                 .findAllByVisibility(true).stream()
-                .map(this::toDto)
+                .map(shaderMapper::toShaderResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<ShaderResponseDto> getAllShaders() {
         return shaderRepository.findAll().stream()
-                .map(this::toDto)
+                .map(shaderMapper::toShaderResponseDto)
                 .collect(Collectors.toList());
     }
 
@@ -46,13 +47,24 @@ public class ShaderServiceImpl implements ShaderService {
         if (optionalShader.isEmpty())
             throw new ResourceNotFoundException("Shader with id " + id + " not found");
 
-        return this.toDto(optionalShader.get());
+        return shaderMapper.toShaderResponseDto(optionalShader.get());
     }
 
     @Override
-    public Shader saveShader(ShaderCreateDto shaderDto) {
-        Shader shader = this.toEntity(shaderDto);
-        return shaderRepository.save(shader);
+    public ShaderResponseDto saveShader(ShaderUpsertDto shaderDto) {
+        Shader shader = shaderMapper.toEntity(shaderDto);
+        Shader savedShader = shaderRepository.save(shader);
+        return shaderMapper.toShaderResponseDto(savedShader);
+    }
+
+    @Override
+    public ShaderResponseDto saveShader(Long id, ShaderUpsertDto shaderUpsertDto) {
+        Shader shader = shaderRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Shader with id " + id + " not found")
+        );
+        shaderMapper.updateEntityFromDto(shader, shaderUpsertDto);
+        shaderRepository.save(shader);
+        return shaderMapper.toShaderResponseDto(shader);
     }
 
     @Override
@@ -75,34 +87,5 @@ public class ShaderServiceImpl implements ShaderService {
             throw new ResourceNotFoundException("Shader with id " + id + " not found");
         }
         shaderRepository.deleteById(id);
-    }
-
-    private Shader toEntity(ShaderCreateDto shaderDto) {
-        Shader shaderEntity = new Shader();
-        shaderEntity.setTitle(shaderDto.title());
-        shaderEntity.setDescription(shaderDto.description());
-        shaderEntity.setCode(shaderDto.code());
-        User user = userRepository.findById(shaderDto.userId()).orElseThrow();
-        shaderEntity.setUser(user);
-        user.getShaders().add(shaderEntity);
-        if (shaderDto.originId() != null) {
-            Optional<Shader> optionalShader = shaderRepository.findById(shaderDto.originId());
-            shaderEntity.setOrigin(optionalShader.orElse(null));
-        }
-        return shaderEntity;
-    }
-
-    private ShaderResponseDto toDto(Shader shader) {
-        return new ShaderResponseDto(
-                shader.getId(),
-                shader.getTitle(),
-                shader.getDescription(),
-                shader.getCode(),
-                shader.getCreatedAt(),
-                shader.getUpdatedAt(),
-                shader.getVisibility(),
-                shader.getUser().getId(),
-                (shader.getOrigin() != null) ? shader.getOrigin().getId() : null
-        );
     }
 }

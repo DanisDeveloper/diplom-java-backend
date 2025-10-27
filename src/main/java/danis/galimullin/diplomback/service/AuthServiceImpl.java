@@ -3,7 +3,8 @@ package danis.galimullin.diplomback.service;
 import danis.galimullin.diplomback.dto.user.UserLoginDto;
 import danis.galimullin.diplomback.dto.user.UserStateDto;
 import danis.galimullin.diplomback.dto.user.UserRegisterDto;
-import danis.galimullin.diplomback.exception.UserAlreadyExistsException;
+import danis.galimullin.diplomback.exception.UserEmailAlreadyExistsException;
+import danis.galimullin.diplomback.exception.UserNameAlreadyExistsException;
 import danis.galimullin.diplomback.model.Role;
 import danis.galimullin.diplomback.model.User;
 import danis.galimullin.diplomback.repository.RoleRepository;
@@ -45,13 +46,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void registerUser(UserRegisterDto userRegisterDto) {
-//        if (userRepository.existsByEmail(userRegisterDto.email())) {
-//            var message = "Email: " + userRegisterDto.email() + " already exists";
-//            throw new UserAlreadyExistsException(message);
-//        }
+        if (userRepository.existsByEmail(userRegisterDto.email())) {
+            throw new UserEmailAlreadyExistsException();
+        }
         if (userRepository.existsByName(userRegisterDto.name())) {
-            var message = "User with name '" + userRegisterDto.name() + "' already exists";
-            throw new UserAlreadyExistsException(message);
+            throw new UserNameAlreadyExistsException();
         }
         User user = toEntity(userRegisterDto);
         userRepository.save(user);
