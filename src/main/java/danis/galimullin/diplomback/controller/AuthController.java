@@ -1,6 +1,7 @@
 package danis.galimullin.diplomback.controller;
 
 import danis.galimullin.diplomback.dto.user.UserLoginDto;
+import danis.galimullin.diplomback.dto.user.UserStateDto;
 import danis.galimullin.diplomback.dto.user.UserRegisterDto;
 import danis.galimullin.diplomback.dto.user.UserResponseDto;
 import danis.galimullin.diplomback.service.AuthService;
@@ -34,10 +35,11 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDto> me(Authentication authentication) {
-        if(authentication == null || !authentication.isAuthenticated()){
+    public ResponseEntity<UserStateDto> me(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
         return ResponseEntity.ok(authService.me(authentication.getName()));
     }
 

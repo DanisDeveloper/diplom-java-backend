@@ -5,6 +5,7 @@ import danis.galimullin.diplomback.model.User;
 import java.util.Date;
 
 public record UserResponseDto(
+        Long id,
         String name,
         String email,
         Date createdAt,
@@ -13,7 +14,9 @@ public record UserResponseDto(
         String biography
 ) {
     static public UserResponseDto fromUser(User user) {
-        return new UserResponseDto(user.getName(),
+        return new UserResponseDto(
+                user.getId(),
+                user.getName(),
                 user.getEmail(),
                 user.getCreatedAt(),
                 user.getAvatarUrl(),

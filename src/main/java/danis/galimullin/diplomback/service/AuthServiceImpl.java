@@ -1,8 +1,8 @@
 package danis.galimullin.diplomback.service;
 
 import danis.galimullin.diplomback.dto.user.UserLoginDto;
+import danis.galimullin.diplomback.dto.user.UserStateDto;
 import danis.galimullin.diplomback.dto.user.UserRegisterDto;
-import danis.galimullin.diplomback.dto.user.UserResponseDto;
 import danis.galimullin.diplomback.exception.UserAlreadyExistsException;
 import danis.galimullin.diplomback.model.Role;
 import danis.galimullin.diplomback.model.User;
@@ -11,7 +11,6 @@ import danis.galimullin.diplomback.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,8 +45,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void registerUser(UserRegisterDto userRegisterDto) {
-        if (userRepository.existsByEmail(userRegisterDto.email())) {
-            throw new UserAlreadyExistsException(userRegisterDto.email());
+//        if (userRepository.existsByEmail(userRegisterDto.email())) {
+//            var message = "Email: " + userRegisterDto.email() + " already exists";
+//            throw new UserAlreadyExistsException(message);
+//        }
+        if (userRepository.existsByName(userRegisterDto.name())) {
+            var message = "User with name '" + userRegisterDto.name() + "' already exists";
+            throw new UserAlreadyExistsException(message);
         }
         User user = toEntity(userRegisterDto);
         userRepository.save(user);
@@ -55,19 +59,24 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void loginUser(UserLoginDto userLoginDto, HttpServletRequest request) {
-        var auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.email(), userLoginDto.password()));
+//        var name = userLoginDto.name();
+//        var password = userLoginDto.password();
+//        if (userLoginDto.name().contains("@")) {
+//
+//        }
+        var auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.name(), userLoginDto.password()));
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(auth);
         request.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT", context);
     }
 
     @Override
-    public UserResponseDto me(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-        if(user.isEmpty()){
-            throw new UsernameNotFoundException("User with email " + email + " not found");
+    public UserStateDto me(String username) {
+        Optional<User> optionalUser = userRepository.findByName(username);
+        if (optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("User '" + username + "' not found");
         }
-        return UserResponseDto.fromUser(user.get());
+        return UserStateDto.fromUser(optionalUser.get());
     }
 
     private User toEntity(UserRegisterDto userRegisterDto) {
