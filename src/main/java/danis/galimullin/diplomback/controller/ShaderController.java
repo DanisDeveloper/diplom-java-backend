@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/shaders")
+@RequestMapping("/api/shaders")
 public class ShaderController {
 
     private final ShaderService shaderService;

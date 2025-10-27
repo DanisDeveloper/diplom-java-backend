@@ -2,10 +2,6 @@ spring:
   application:
     name: diplom-back
 
-  mvc:
-    servlet:
-      path: /api/v1
-
   boot:
     admin:
       client:
