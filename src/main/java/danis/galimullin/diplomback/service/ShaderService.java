@@ -1,9 +1,9 @@
 package danis.galimullin.diplomback.service;
 
-import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
-import danis.galimullin.diplomback.model.Shader;
+import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
 
+import java.security.Principal;
 import java.util.List;
 
 public interface ShaderService {
@@ -13,7 +13,8 @@ public interface ShaderService {
 
     ShaderResponseDto getShaderById(Long id);
 
-    ShaderResponseDto saveShader(ShaderUpsertDto shader);
+    ShaderResponseDto saveShader(ShaderUpsertDto shaderDto, Principal principal);
+
     ShaderResponseDto saveShader(Long id, ShaderUpsertDto shader);
 
     void deleteShaderById(Long id);

@@ -6,7 +6,6 @@ public record ShaderUpsertDto(
         String title,
         String description,
         String code,
-        Long userId,
         Boolean visibility,
         @Nullable Long originId
 ) { }

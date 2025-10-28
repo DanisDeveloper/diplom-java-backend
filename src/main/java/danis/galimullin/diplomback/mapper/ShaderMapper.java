@@ -29,14 +29,14 @@ public class ShaderMapper {
         return shader;
     }
 
-    public void updateEntityFromDto(Shader shader, ShaderUpsertDto shaderDto) {
+    public void updateEntityFromDto(
+            Shader shader,
+            ShaderUpsertDto shaderDto
+    ) {
         shader.setTitle(shaderDto.title());
         shader.setDescription(shaderDto.description());
         shader.setCode(shaderDto.code());
         shader.setVisibility(shaderDto.visibility());
-        shader.setUser(userRepository.getReferenceById(shaderDto.userId()));
-        if (shaderDto.originId() != null)
-            shader.setOrigin(shaderRepository.getReferenceById(shaderDto.originId()));
     }
 
 

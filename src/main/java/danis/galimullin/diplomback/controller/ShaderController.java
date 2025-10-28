@@ -1,10 +1,12 @@
 package danis.galimullin.diplomback.controller;
 
-import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
+import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
+import danis.galimullin.diplomback.service.LikeService;
 import danis.galimullin.diplomback.service.ShaderService;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -12,9 +14,11 @@ import java.util.List;
 public class ShaderController {
 
     private final ShaderService shaderService;
+    private final LikeService likeService;
 
-    public ShaderController(ShaderService shaderService) {
+    public ShaderController(ShaderService shaderService, LikeService likeService) {
         this.shaderService = shaderService;
+        this.likeService = likeService;
     }
 
     @GetMapping("/{id}")
@@ -33,8 +37,8 @@ public class ShaderController {
 //    }
 //
     @PostMapping
-    public ShaderResponseDto save(@RequestBody ShaderUpsertDto shader) {
-        return shaderService.saveShader(shader);
+    public ShaderResponseDto save(@RequestBody ShaderUpsertDto shader, Principal principal) {
+        return shaderService.saveShader(shader, principal);
     }
 
     @PutMapping("/{id}")
@@ -56,4 +60,15 @@ public class ShaderController {
     public void deleteById(@PathVariable Long id) {
         shaderService.deleteShaderById(id);
     }
+
+//
+//    @PostMapping("/{shaderId}/like")
+//    public void likeShader(@PathVariable Long shaderId) {
+//        likeService.likeShader(shaderId);
+//    }
+//
+//    @DeleteMapping("/{shaderId}/like")
+//    public void unlikeShader(@PathVariable Long shaderId) {
+//        likeService.unlikeShader(shaderId);
+//    }
 }

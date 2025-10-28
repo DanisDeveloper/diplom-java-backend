@@ -1,16 +1,19 @@
 package danis.galimullin.diplomback.service;
 
-import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
+import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
 import danis.galimullin.diplomback.exception.ShaderNotFoundException;
+import danis.galimullin.diplomback.exception.UserNotFoundException;
 import danis.galimullin.diplomback.mapper.ShaderMapper;
 import danis.galimullin.diplomback.model.Shader;
+import danis.galimullin.diplomback.model.User;
 import danis.galimullin.diplomback.repository.ShaderRepository;
 import danis.galimullin.diplomback.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,9 +56,22 @@ public class ShaderServiceImpl implements ShaderService {
     }
 
     @Override
-    public ShaderResponseDto saveShader(ShaderUpsertDto shaderDto) {
+    public ShaderResponseDto saveShader(ShaderUpsertDto shaderDto, Principal principal) {
+        User user = userRepository
+                .findByName(principal.getName())
+                .orElseThrow(UserNotFoundException::new);
+
+        Shader origin = Optional.ofNullable(shaderDto.originId())
+                .flatMap(shaderRepository::findById)
+                .orElse(null);
+        if (shaderDto.originId() != null)
+            origin = shaderRepository.findById(shaderDto.originId()).orElse(null);
+
         Shader shader = shaderMapper.toEntity(shaderDto);
+        shader.setUser(user);
+        shader.setOrigin(origin);
         Shader savedShader = shaderRepository.save(shader);
+
         return shaderMapper.toShaderResponseDto(savedShader);
     }
 
@@ -63,6 +79,10 @@ public class ShaderServiceImpl implements ShaderService {
     public ShaderResponseDto saveShader(Long id, ShaderUpsertDto shaderUpsertDto) {
         Shader shader = shaderRepository.findById(id).orElseThrow(ShaderNotFoundException::new);
         shaderMapper.updateEntityFromDto(shader, shaderUpsertDto);
+
+        if (shaderUpsertDto.originId() != null)
+            shader.setOrigin(shaderRepository.getReferenceById(shaderUpsertDto.originId()));
+
         shaderRepository.save(shader);
         return shaderMapper.toShaderResponseDto(shader);
     }
