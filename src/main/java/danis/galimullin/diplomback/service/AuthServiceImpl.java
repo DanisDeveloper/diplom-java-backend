@@ -5,6 +5,7 @@ import danis.galimullin.diplomback.dto.user.UserStateDto;
 import danis.galimullin.diplomback.dto.user.UserRegisterDto;
 import danis.galimullin.diplomback.exception.UserEmailAlreadyExistsException;
 import danis.galimullin.diplomback.exception.UserNameAlreadyExistsException;
+import danis.galimullin.diplomback.mapper.UserMapper;
 import danis.galimullin.diplomback.model.Role;
 import danis.galimullin.diplomback.model.User;
 import danis.galimullin.diplomback.repository.RoleRepository;
@@ -26,21 +27,15 @@ import java.util.Set;
 @Service
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
+    private final UserMapper userMapper;
 
     public AuthServiceImpl(UserRepository userRepository,
-                           RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder,
-                           UserDetailsService userDetailsService,
-                           AuthenticationManager authenticationManager) {
+                           AuthenticationManager authenticationManager,
+                           UserMapper userMapper) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.userDetailsService = userDetailsService;
         this.authenticationManager = authenticationManager;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -52,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.existsByName(userRegisterDto.name())) {
             throw new UserNameAlreadyExistsException();
         }
-        User user = toEntity(userRegisterDto);
+        User user = userMapper.toEntity(userRegisterDto);
         userRepository.save(user);
     }
 
@@ -75,19 +70,8 @@ public class AuthServiceImpl implements AuthService {
         if (optionalUser.isEmpty()) {
             throw new UsernameNotFoundException("User '" + username + "' not found");
         }
-        return UserStateDto.fromUser(optionalUser.get());
+        return userMapper.toUserStateDto(optionalUser.get());
     }
 
-    private User toEntity(UserRegisterDto userRegisterDto) {
-        User user = new User();
-        user.setName(userRegisterDto.name());
-        user.setEmail(userRegisterDto.email());
 
-        var hashedPassword = passwordEncoder.encode(userRegisterDto.password());
-        user.setHashedPassword(hashedPassword);
-
-        Role role = roleRepository.findByName("ROLE_USER").orElseThrow(() -> new IllegalArgumentException("Role " + "ROLE_USER" + " not found"));
-        user.setRoles(Set.of(role));
-        return user;
-    }
 }
