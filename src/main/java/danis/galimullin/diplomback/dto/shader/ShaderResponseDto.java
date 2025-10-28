@@ -1,6 +1,6 @@
 package danis.galimullin.diplomback.dto.shader;
 
-import jakarta.annotation.Nullable;
+import danis.galimullin.diplomback.dto.user.UserStateDto;
 
 import java.util.Date;
 
@@ -12,7 +12,7 @@ public record ShaderResponseDto(
         Date createdAt,
         Date updatedAt,
         Boolean visibility,
-        Long userId,
-        @Nullable Long originId
+        UserStateDto user,
+        ShaderOriginDto origin
 ) {
 }

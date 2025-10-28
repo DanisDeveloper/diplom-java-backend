@@ -1,5 +1,6 @@
 package danis.galimullin.diplomback.mapper;
 
+import danis.galimullin.diplomback.dto.shader.ShaderOriginDto;
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
 import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
 import danis.galimullin.diplomback.model.Shader;
@@ -12,10 +13,12 @@ import java.util.Optional;
 
 @Component
 public class ShaderMapper {
+    private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final ShaderRepository shaderRepository;
 
-    public ShaderMapper(UserRepository userRepository, ShaderRepository shaderRepository) {
+    public ShaderMapper(UserMapper userMapper, UserRepository userRepository, ShaderRepository shaderRepository) {
+        this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.shaderRepository = shaderRepository;
     }
@@ -31,13 +34,9 @@ public class ShaderMapper {
         shader.setDescription(shaderDto.description());
         shader.setCode(shaderDto.code());
         shader.setVisibility(shaderDto.visibility());
-        User user = userRepository.findById(shaderDto.userId()).orElseThrow();
-        shader.setUser(user);
-        user.getShaders().add(shader);
-        if (shaderDto.originId() != null) {
-            Optional<Shader> optionalShader = shaderRepository.findById(shaderDto.originId());
-            shader.setOrigin(optionalShader.orElse(null));
-        }
+        shader.setUser(userRepository.getReferenceById(shaderDto.userId()));
+        if (shaderDto.originId() != null)
+            shader.setOrigin(shaderRepository.getReferenceById(shaderDto.originId()));
     }
 
 
@@ -50,8 +49,15 @@ public class ShaderMapper {
                 shader.getCreatedAt(),
                 shader.getUpdatedAt(),
                 shader.getVisibility(),
-                shader.getUser().getId(),
-                (shader.getOrigin() != null) ? shader.getOrigin().getId() : null
+                userMapper.toUserStateDto(shader.getUser()),
+                (shader.getOrigin() == null) ? null : toShaderOriginDto(shader.getOrigin())
+        );
+    }
+
+    public ShaderOriginDto toShaderOriginDto(Shader shader) {
+        return new ShaderOriginDto(
+                shader.getId(),
+                shader.getTitle()
         );
     }
 }

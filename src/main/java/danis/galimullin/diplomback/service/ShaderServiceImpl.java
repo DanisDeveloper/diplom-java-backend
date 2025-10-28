@@ -2,18 +2,20 @@ package danis.galimullin.diplomback.service;
 
 import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
-import danis.galimullin.diplomback.exception.ResourceNotFoundException;
+import danis.galimullin.diplomback.exception.ShaderNotFoundException;
 import danis.galimullin.diplomback.mapper.ShaderMapper;
 import danis.galimullin.diplomback.model.Shader;
 import danis.galimullin.diplomback.repository.ShaderRepository;
 import danis.galimullin.diplomback.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ShaderServiceImpl implements ShaderService {
     private final ShaderRepository shaderRepository;
@@ -45,7 +47,7 @@ public class ShaderServiceImpl implements ShaderService {
     public ShaderResponseDto getShaderById(Long id) {
         Optional<Shader> optionalShader = shaderRepository.findById(id);
         if (optionalShader.isEmpty())
-            throw new ResourceNotFoundException("Shader with id " + id + " not found");
+            throw new ShaderNotFoundException();
 
         return shaderMapper.toShaderResponseDto(optionalShader.get());
     }
@@ -59,9 +61,7 @@ public class ShaderServiceImpl implements ShaderService {
 
     @Override
     public ShaderResponseDto saveShader(Long id, ShaderUpsertDto shaderUpsertDto) {
-        Shader shader = shaderRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Shader with id " + id + " not found")
-        );
+        Shader shader = shaderRepository.findById(id).orElseThrow(ShaderNotFoundException::new);
         shaderMapper.updateEntityFromDto(shader, shaderUpsertDto);
         shaderRepository.save(shader);
         return shaderMapper.toShaderResponseDto(shader);
@@ -72,7 +72,7 @@ public class ShaderServiceImpl implements ShaderService {
     public void patchById(Long id, String title, String description, String code, Boolean visibility) {
         Optional<Shader> optionalShader = shaderRepository.findById(id);
         if (optionalShader.isEmpty()) {
-            throw new ResourceNotFoundException("Shader with id " + id + " not found");
+            throw new ShaderNotFoundException();
         }
         Shader shader = optionalShader.get();
         if (title != null && !title.isEmpty()) shader.setTitle(title);
@@ -84,7 +84,7 @@ public class ShaderServiceImpl implements ShaderService {
     @Override
     public void deleteShaderById(Long id) {
         if (!shaderRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Shader with id " + id + " not found");
+            throw new ShaderNotFoundException();
         }
         shaderRepository.deleteById(id);
     }

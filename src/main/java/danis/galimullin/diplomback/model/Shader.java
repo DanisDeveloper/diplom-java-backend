@@ -36,6 +36,6 @@ public class Shader {
     @JoinColumn(nullable = false)
     private User user;
 
-    @OneToOne
+    @ManyToOne
     private Shader origin;
 }

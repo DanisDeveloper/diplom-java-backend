@@ -40,8 +40,8 @@ public class SecurityConfiguration {
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/**").hasRole("USER")
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .build();
