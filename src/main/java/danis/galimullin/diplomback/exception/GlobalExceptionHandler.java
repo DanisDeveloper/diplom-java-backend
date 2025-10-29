@@ -22,6 +22,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 
+    @ExceptionHandler(LikeAlreadyExists.class)
+    public ResponseEntity<Map<String, String>> handleLikeExists(LikeAlreadyExists ex) {
+        Map<String, String> body = Map.of("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
     @ExceptionHandler(ShaderNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleResourceNotFound(ShaderNotFoundException ex) {
         Map<String, String> body = Map.of("error", ex.getMessage());

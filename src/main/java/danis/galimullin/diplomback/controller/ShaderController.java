@@ -61,14 +61,18 @@ public class ShaderController {
         shaderService.deleteShaderById(id);
     }
 
-//
-//    @PostMapping("/{shaderId}/like")
-//    public void likeShader(@PathVariable Long shaderId) {
-//        likeService.likeShader(shaderId);
-//    }
-//
-//    @DeleteMapping("/{shaderId}/like")
-//    public void unlikeShader(@PathVariable Long shaderId) {
-//        likeService.unlikeShader(shaderId);
-//    }
+    @GetMapping("/{shaderId}/like")
+    public Boolean isShaderLiked(@PathVariable Long shaderId, Principal principal) {
+        return likeService.isShaderLiked(shaderId, principal.getName());
+    }
+
+    @PostMapping("/{shaderId}/like")
+    public void likeShader(@PathVariable Long shaderId, Principal principal) {
+        likeService.likeShader(shaderId, principal.getName());
+    }
+
+    @DeleteMapping("/{shaderId}/like")
+    public void unlikeShader(@PathVariable Long shaderId, Principal principal) {
+        likeService.unlikeShader(shaderId, principal.getName());
+    }
 }

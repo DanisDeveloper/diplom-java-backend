@@ -29,7 +29,9 @@ public class UserMapper {
         var hashedPassword = passwordEncoder.encode(userRegisterDto.password());
         user.setHashedPassword(hashedPassword);
 
-        Role role = roleRepository.findByName("ROLE_USER").orElseThrow(() -> new IllegalArgumentException("Role " + "ROLE_USER" + " not found"));
+        Role role = roleRepository
+                .findByName("ROLE_USER")
+                .orElseThrow(() -> new IllegalArgumentException("Role " + "ROLE_USER" + " not found"));
         user.setRoles(Set.of(role));
         return user;
     }

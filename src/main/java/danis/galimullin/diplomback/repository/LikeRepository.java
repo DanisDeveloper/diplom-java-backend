@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LikeRepository extends JpaRepository<Like, Long> {
+    void deleteByShaderIdAndUserName(Long shaderId, String name);
+    Boolean existsByShaderIdAndUserName(Long shaderId, String name);
 }
