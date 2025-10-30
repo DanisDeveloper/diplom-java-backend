@@ -1,5 +1,6 @@
 package danis.galimullin.diplomback.service;
 
+import danis.galimullin.diplomback.configuration.RedisConfig;
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
 import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
 import danis.galimullin.diplomback.exception.ShaderNotFoundException;
@@ -11,11 +12,13 @@ import danis.galimullin.diplomback.repository.ShaderRepository;
 import danis.galimullin.diplomback.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,11 +27,16 @@ public class ShaderServiceImpl implements ShaderService {
     private final ShaderRepository shaderRepository;
     private final UserRepository userRepository;
     private final ShaderMapper shaderMapper;
+    private final RedisTemplate<String, String> redisTemplate;
 
-    public ShaderServiceImpl(ShaderRepository shaderRepository, UserRepository userRepository, ShaderMapper shaderMapper) {
+    public ShaderServiceImpl(ShaderRepository shaderRepository,
+                             UserRepository userRepository,
+                             ShaderMapper shaderMapper,
+                             RedisTemplate<String, String> redisTemplate) {
         this.shaderRepository = shaderRepository;
         this.userRepository = userRepository;
         this.shaderMapper = shaderMapper;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -108,4 +116,16 @@ public class ShaderServiceImpl implements ShaderService {
         }
         shaderRepository.deleteById(id);
     }
+
+    @Override
+    @Transactional
+    public void incrementViews(Long shaderId, String userIP) {
+        String key = "view:shader:" + shaderId + ":" + userIP;
+        Boolean alreadyViewed = redisTemplate.hasKey(key);
+        if(!alreadyViewed){
+            shaderRepository.incrementViews(shaderId);
+            redisTemplate.opsForValue().set(key, "1", 24, TimeUnit.HOURS);
+        }
+    }
+
 }

@@ -20,4 +20,6 @@ public interface ShaderService {
     void deleteShaderById(Long id);
 
     void patchById(Long id, String title, String description, String code, Boolean visibility);
+
+    void incrementViews(Long shaderId, String userIP);
 }

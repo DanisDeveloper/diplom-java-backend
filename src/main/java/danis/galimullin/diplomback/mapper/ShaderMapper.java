@@ -40,6 +40,7 @@ public class ShaderMapper {
                 shader.getCreatedAt(),
                 shader.getUpdatedAt(),
                 shader.getVisibility(),
+                shader.getViews(),
                 userMapper.toUserStateDto(shader.getUser()),
                 (shader.getOrigin() == null) ? null : toShaderOriginDto(shader.getOrigin())
         );

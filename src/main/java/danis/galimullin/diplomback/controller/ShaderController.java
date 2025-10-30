@@ -7,6 +7,7 @@ import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
 import danis.galimullin.diplomback.service.CommentService;
 import danis.galimullin.diplomback.service.LikeService;
 import danis.galimullin.diplomback.service.ShaderService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -30,7 +31,9 @@ public class ShaderController {
 
     // ========== SHADERS ==========
     @GetMapping("/{id}")
-    public ShaderResponseDto getShaderById(@PathVariable Long id) {
+    public ShaderResponseDto getShaderById(@PathVariable Long id, HttpServletRequest request) {
+        String ip = request.getRemoteAddr();
+        shaderService.incrementViews(id, ip);
         return shaderService.getShaderById(id);
     }
 
