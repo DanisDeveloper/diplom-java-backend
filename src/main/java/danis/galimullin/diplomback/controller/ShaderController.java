@@ -1,7 +1,10 @@
 package danis.galimullin.diplomback.controller;
 
+import danis.galimullin.diplomback.dto.comment.CommentCreateDto;
+import danis.galimullin.diplomback.dto.comment.CommentResponseDto;
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
 import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
+import danis.galimullin.diplomback.service.CommentService;
 import danis.galimullin.diplomback.service.LikeService;
 import danis.galimullin.diplomback.service.ShaderService;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +18,17 @@ public class ShaderController {
 
     private final ShaderService shaderService;
     private final LikeService likeService;
+    private final CommentService commentService;
 
-    public ShaderController(ShaderService shaderService, LikeService likeService) {
+    public ShaderController(ShaderService shaderService,
+                            LikeService likeService,
+                            CommentService commentService) {
         this.shaderService = shaderService;
         this.likeService = likeService;
+        this.commentService = commentService;
     }
 
+    // ========== SHADERS ==========
     @GetMapping("/{id}")
     public ShaderResponseDto getShaderById(@PathVariable Long id) {
         return shaderService.getShaderById(id);
@@ -61,6 +69,7 @@ public class ShaderController {
         shaderService.deleteShaderById(id);
     }
 
+    // ========== LIKES ==========
     @GetMapping("/{shaderId}/like")
     public Boolean isShaderLiked(@PathVariable Long shaderId, Principal principal) {
         return likeService.isShaderLiked(shaderId, principal.getName());
@@ -74,5 +83,26 @@ public class ShaderController {
     @DeleteMapping("/{shaderId}/like")
     public void unlikeShader(@PathVariable Long shaderId, Principal principal) {
         likeService.unlikeShader(shaderId, principal.getName());
+    }
+
+    // ========== COMMENTS ==========
+
+    @GetMapping("/{shaderId}/comments")
+    public List<CommentResponseDto> getComments(@PathVariable Long shaderId) {
+        return commentService.getAllShaderComments(shaderId);
+    }
+
+    @PostMapping("/{shaderId}/comment")
+    public CommentResponseDto comment(@PathVariable Long shaderId, @RequestBody CommentCreateDto commentCreateDto, Principal principal) {
+        return commentService.commentShader(shaderId, commentCreateDto.text(), principal.getName());
+    }
+
+    @PatchMapping("/{shaderId}/comments/{commentId}")
+    public void comment(@PathVariable Long shaderId,
+                        @PathVariable Long commentId,
+                        @RequestParam Boolean hidden) {
+        // TODO возможно стоит добавить функционал проверки, что пользователь авторизован
+        // TODO добавить функционал по изменению комментария
+        commentService.setHiddenCommentStatus(commentId, hidden);
     }
 }

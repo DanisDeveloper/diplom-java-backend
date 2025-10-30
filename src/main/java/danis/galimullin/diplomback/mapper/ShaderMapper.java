@@ -4,23 +4,14 @@ import danis.galimullin.diplomback.dto.shader.ShaderOriginDto;
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
 import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
 import danis.galimullin.diplomback.model.Shader;
-import danis.galimullin.diplomback.model.User;
-import danis.galimullin.diplomback.repository.ShaderRepository;
-import danis.galimullin.diplomback.repository.UserRepository;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class ShaderMapper {
     private final UserMapper userMapper;
-    private final UserRepository userRepository;
-    private final ShaderRepository shaderRepository;
 
-    public ShaderMapper(UserMapper userMapper, UserRepository userRepository, ShaderRepository shaderRepository) {
+    public ShaderMapper(UserMapper userMapper) {
         this.userMapper = userMapper;
-        this.userRepository = userRepository;
-        this.shaderRepository = shaderRepository;
     }
 
     public Shader toEntity(ShaderUpsertDto shaderDto) {

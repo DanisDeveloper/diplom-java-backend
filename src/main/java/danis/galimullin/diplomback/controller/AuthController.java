@@ -36,6 +36,7 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<UserStateDto> me(Authentication authentication) {
+        // TODO сделать PreAuthorize вместо условия
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

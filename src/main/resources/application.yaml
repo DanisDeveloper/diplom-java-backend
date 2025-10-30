@@ -24,8 +24,10 @@ spring:
 logging:
   level:
     root: debug
+    org.springframework.security: debug
   file:
     name: diplom.log
+
 
 server:
   port: 8080

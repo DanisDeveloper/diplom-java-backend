@@ -40,7 +40,6 @@ public class UserMapper {
         return new UserResponseDto(
                 user.getId(),
                 user.getName(),
-                user.getEmail(),
                 user.getCreatedAt(),
                 user.getAvatarUrl(),
                 user.getBackgroundUrl(),

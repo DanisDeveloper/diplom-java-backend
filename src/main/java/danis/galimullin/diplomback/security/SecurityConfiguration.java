@@ -34,15 +34,16 @@ public class SecurityConfiguration {
                     var corsConfig = new CorsConfiguration();
                     corsConfig.setAllowedOrigins(List.of("http://localhost:5173"));
                     corsConfig.setAllowedOriginPatterns(List.of("*"));
-                    corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                     corsConfig.setAllowedHeaders(List.of("*"));
                     corsConfig.setAllowCredentials(true);
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/**").hasRole("USER")
-                        .anyRequest().authenticated()
+                                .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/shaders/*/comments/**").permitAll()
+                                .requestMatchers("/api/**").hasRole("USER")
+                                .anyRequest().authenticated()
                 )
                 .build();
     }
