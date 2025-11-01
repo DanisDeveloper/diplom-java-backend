@@ -35,6 +35,7 @@ public class LikeServiceImpl implements LikeService {
         }
         User user = userRepository.findByName(username).orElseThrow(UserNotFoundException::new);
         Shader shader = shaderRepository.findById(shaderId).orElseThrow(ShaderNotFoundException::new);
+        shaderRepository.incrementLikes(shaderId);
         Like like = new Like();
         like.setUser(user);
         like.setShader(shader);
@@ -44,7 +45,10 @@ public class LikeServiceImpl implements LikeService {
     @Override
     @Transactional
     public void unlikeShader(Long shaderId, String username) {
-        likeRepository.deleteByShaderIdAndUserName(shaderId, username);
+        if(likeRepository.existsByShaderIdAndUserName(shaderId, username)) {
+            shaderRepository.decrementLikes(shaderId);
+            likeRepository.deleteByShaderIdAndUserName(shaderId, username);
+        }
     }
 
     @Override

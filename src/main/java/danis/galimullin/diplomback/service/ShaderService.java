@@ -2,14 +2,14 @@ package danis.galimullin.diplomback.service;
 
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
 import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
+import danis.galimullin.diplomback.model.SortOption;
+import org.springframework.data.domain.Page;
 
 import java.security.Principal;
 import java.util.List;
 
 public interface ShaderService {
-    List<ShaderResponseDto> getALlVisibleShaders();
-
-    List<ShaderResponseDto> getAllShaders();
+    Page<ShaderResponseDto> getAllVisibleShaders(Integer page, Integer pageSize, SortOption sortOption);
 
     ShaderResponseDto getShaderById(Long id);
 

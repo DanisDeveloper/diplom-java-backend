@@ -1,7 +1,7 @@
 package danis.galimullin.diplomback.service;
 
 import danis.galimullin.diplomback.repository.UserRepository;
-import danis.galimullin.diplomback.security.AppUserDetails;
+import danis.galimullin.diplomback.model.AppUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

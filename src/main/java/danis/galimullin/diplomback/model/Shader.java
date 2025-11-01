@@ -32,8 +32,9 @@ public class Shader {
     @Column(nullable = false)
     private Boolean visibility = true;
 
-    @Column(nullable = false)
     private Long views = 0L;
+    private Long likes = 0L;
+    private Long comments = 0L;
 
     @ManyToOne
     @JoinColumn(nullable = false)

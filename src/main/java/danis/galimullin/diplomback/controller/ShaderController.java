@@ -4,10 +4,15 @@ import danis.galimullin.diplomback.dto.comment.CommentCreateDto;
 import danis.galimullin.diplomback.dto.comment.CommentResponseDto;
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
 import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
+import danis.galimullin.diplomback.model.Shader;
+import danis.galimullin.diplomback.model.SortOption;
 import danis.galimullin.diplomback.service.CommentService;
 import danis.galimullin.diplomback.service.LikeService;
 import danis.galimullin.diplomback.service.ShaderService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -38,15 +43,24 @@ public class ShaderController {
     }
 
     @GetMapping
-    public List<ShaderResponseDto> getAllShaders() {
-        return shaderService.getAllShaders();
+    public ResponseEntity<List<ShaderResponseDto>> getAllVisibleShaders(
+            @RequestParam Integer page,
+            @RequestParam("page_size") Integer pageSize,
+            @RequestParam("sort_option") SortOption sortOption
+    ) {
+        Page<ShaderResponseDto> shadersPage = shaderService.getAllVisibleShaders(page, pageSize, sortOption);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(shadersPage.getTotalElements()));
+        headers.add("X-Total-Pages", String.valueOf(shadersPage.getTotalPages()));
+        headers.add("X-Current-Page", String.valueOf(shadersPage.getNumber()));
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(shadersPage.getContent());
     }
 
-    //    @GetMapping
-//    public List<ShaderResponseDto> getAllVisibleShaders() {
-//        return shaderService.getALlVisibleShaders();
-//    }
-//
     @PostMapping
     public ShaderResponseDto save(@RequestBody ShaderUpsertDto shader, Principal principal) {
         return shaderService.saveShader(shader, principal);

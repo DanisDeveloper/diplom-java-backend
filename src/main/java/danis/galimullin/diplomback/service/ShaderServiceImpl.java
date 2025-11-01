@@ -1,25 +1,27 @@
 package danis.galimullin.diplomback.service;
 
-import danis.galimullin.diplomback.configuration.RedisConfig;
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
 import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
 import danis.galimullin.diplomback.exception.ShaderNotFoundException;
 import danis.galimullin.diplomback.exception.UserNotFoundException;
 import danis.galimullin.diplomback.mapper.ShaderMapper;
 import danis.galimullin.diplomback.model.Shader;
+import danis.galimullin.diplomback.model.SortOption;
 import danis.galimullin.diplomback.model.User;
 import danis.galimullin.diplomback.repository.ShaderRepository;
 import danis.galimullin.diplomback.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,18 +42,19 @@ public class ShaderServiceImpl implements ShaderService {
     }
 
     @Override
-    public List<ShaderResponseDto> getALlVisibleShaders() {
-        return shaderRepository
-                .findAllByVisibility(true).stream()
-                .map(shaderMapper::toShaderResponseDto)
-                .collect(Collectors.toList());
-    }
+    public Page<ShaderResponseDto> getAllVisibleShaders(Integer page, Integer pageSize, SortOption sortOption) {
 
-    @Override
-    public List<ShaderResponseDto> getAllShaders() {
-        return shaderRepository.findAll().stream()
-                .map(shaderMapper::toShaderResponseDto)
-                .collect(Collectors.toList());
+        var property = switch (sortOption) {
+            case LIKED -> Sort.by("likes").descending();
+            case COMMENTED -> Sort.by("comments").descending();
+            case VIEWED -> Sort.by("views").descending();
+            default -> Sort.by("createdAt").descending(); // NEWEST
+        };
+        Pageable pageable = PageRequest.of(page, pageSize, property);
+
+        return shaderRepository
+                .findAllByVisibility(true, pageable)
+                .map(shaderMapper::toShaderResponseDto);
     }
 
     @Override
@@ -122,7 +125,7 @@ public class ShaderServiceImpl implements ShaderService {
     public void incrementViews(Long shaderId, String userIP) {
         String key = "view:shader:" + shaderId + ":" + userIP;
         Boolean alreadyViewed = redisTemplate.hasKey(key);
-        if(!alreadyViewed){
+        if (!alreadyViewed) {
             shaderRepository.incrementViews(shaderId);
             redisTemplate.opsForValue().set(key, "1", 24, TimeUnit.HOURS);
         }

@@ -35,8 +35,9 @@ public class CommentServiceimpl implements CommentService {
     @Override
     @Transactional
     public CommentResponseDto commentShader(Long shaderId, String text, String username) {
-        Shader shader = shaderRepository.findById(shaderId).orElseThrow(ShaderNotFoundException::new);
         User user = userRepository.findByName(username).orElseThrow(UserNotFoundException::new);
+        Shader shader = shaderRepository.findById(shaderId).orElseThrow(ShaderNotFoundException::new);
+        shaderRepository.incrementComments(shaderId);
 
         Comment comment = new Comment();
         comment.setShader(shader);

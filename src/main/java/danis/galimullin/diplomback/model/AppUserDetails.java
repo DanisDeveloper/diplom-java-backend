@@ -1,6 +1,5 @@
-package danis.galimullin.diplomback.security;
+package danis.galimullin.diplomback.model;
 
-import danis.galimullin.diplomback.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

@@ -14,6 +14,14 @@ services:
       - postgresql
       - redis
 
+#  frontend:
+#    container_name: shader-toy-frontend
+#    build: /home/danis/WebstormProjects/Diplom
+#    ports:
+#      - "80:80"
+#    depends_on:
+#      - backend
+
   postgresql:
     container_name: postgresql
     image: postgres:16

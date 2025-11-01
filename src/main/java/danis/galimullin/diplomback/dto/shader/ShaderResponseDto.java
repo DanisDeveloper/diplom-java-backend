@@ -13,6 +13,8 @@ public record ShaderResponseDto(
         Date updatedAt,
         Boolean visibility,
         Long views,
+        Long likes,
+        Long comments,
         UserStateDto user,
         ShaderOriginDto origin
 ) {
