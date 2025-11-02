@@ -58,7 +58,7 @@ public class CommentServiceimpl implements CommentService {
     @Override
     public List<CommentResponseDto> getAllShaderComments(Long shaderId) {
         return commentRepository
-                .findAllByShaderId(shaderId).stream()
+                .findAllByShaderIdOrderByCreatedAtDesc(shaderId).stream()
                 .map(commentMapper::toCommentResponseDto)
                 .collect(Collectors.toList());
     }

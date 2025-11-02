@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findAllByShaderId(Long  shaderId);
+    List<Comment> findAllByShaderIdOrderByCreatedAtDesc(Long shaderId);
 }
