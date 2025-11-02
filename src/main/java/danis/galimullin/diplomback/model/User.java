@@ -30,7 +30,6 @@ public class User {
     private String avatarUrl;
     private String backgroundUrl;
 
-    @Column(columnDefinition = "TEXT")
     private String biography = "";
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -38,5 +37,4 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
-
 }

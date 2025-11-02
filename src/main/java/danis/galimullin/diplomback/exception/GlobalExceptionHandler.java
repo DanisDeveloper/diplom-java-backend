@@ -39,10 +39,17 @@ public class GlobalExceptionHandler {
         Map<String, String> body = Map.of("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
+
     @ExceptionHandler(CommentNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleUserNotFound(CommentNotFoundException ex) {
         Map<String, String> body = Map.of("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
+    @ExceptionHandler(FileEmptyException.class)
+    public ResponseEntity<Map<String, String>> handleFileEmpty(FileEmptyException ex) {
+        Map<String, String> body = Map.of("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 }
 

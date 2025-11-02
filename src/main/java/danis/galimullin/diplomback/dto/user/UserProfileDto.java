@@ -2,7 +2,7 @@ package danis.galimullin.diplomback.dto.user;
 
 import java.util.Date;
 
-public record UserResponseDto(
+public record UserProfileDto(
         Long id,
         String name,
         Date createdAt,

@@ -20,7 +20,7 @@ public class CommentMapper {
                 comment.getHidden() ? "" : comment.getText(),
                 comment.getHidden(),
                 comment.getCreatedAt(),
-                userMapper.toUserResponseDto(comment.getUser()),
+                userMapper.toUserInfoForComment(comment.getUser()),
                 shaderMapper.toShaderOriginDto(comment.getShader())
         );
     }

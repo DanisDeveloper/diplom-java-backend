@@ -41,8 +41,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/shaders/*/comments/**").permitAll()
-                                .requestMatchers("/api/**").hasRole("USER")
-                                .anyRequest().authenticated()
+//                                .requestMatchers("/api/**").hasRole("USER")
+//                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 )
                 .build();
     }

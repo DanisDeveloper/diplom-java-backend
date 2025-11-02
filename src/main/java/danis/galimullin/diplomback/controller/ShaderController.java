@@ -4,7 +4,6 @@ import danis.galimullin.diplomback.dto.comment.CommentCreateDto;
 import danis.galimullin.diplomback.dto.comment.CommentResponseDto;
 import danis.galimullin.diplomback.dto.shader.ShaderResponseDto;
 import danis.galimullin.diplomback.dto.shader.ShaderUpsertDto;
-import danis.galimullin.diplomback.model.Shader;
 import danis.galimullin.diplomback.model.SortOption;
 import danis.galimullin.diplomback.service.CommentService;
 import danis.galimullin.diplomback.service.LikeService;

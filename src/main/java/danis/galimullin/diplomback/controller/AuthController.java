@@ -1,9 +1,8 @@
 package danis.galimullin.diplomback.controller;
 
 import danis.galimullin.diplomback.dto.user.UserLoginDto;
-import danis.galimullin.diplomback.dto.user.UserStateDto;
 import danis.galimullin.diplomback.dto.user.UserRegisterDto;
-import danis.galimullin.diplomback.dto.user.UserResponseDto;
+import danis.galimullin.diplomback.dto.user.UserStateDto;
 import danis.galimullin.diplomback.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +28,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDto> loginUser(@RequestBody UserLoginDto userLoginDto, HttpServletRequest request) {
+    public ResponseEntity<?> loginUser(@RequestBody UserLoginDto userLoginDto, HttpServletRequest request) {
         authService.loginUser(userLoginDto, request);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/me")

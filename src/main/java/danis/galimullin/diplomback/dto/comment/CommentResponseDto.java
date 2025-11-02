@@ -1,7 +1,7 @@
 package danis.galimullin.diplomback.dto.comment;
 
 import danis.galimullin.diplomback.dto.shader.ShaderOriginDto;
-import danis.galimullin.diplomback.dto.user.UserResponseDto;
+import danis.galimullin.diplomback.dto.user.UserInfoForComment;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ public record CommentResponseDto(
         String text,
         Boolean hidden,
         Date createdAt,
-        UserResponseDto user,
+        UserInfoForComment user,
         ShaderOriginDto shader
 ) {
 

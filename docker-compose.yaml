@@ -10,6 +10,8 @@ services:
       SPRING_ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     ports:
       - "8080:8080"
+    volumes:
+      - /home/danis/Pictures/shaderToy:/opt/static
     depends_on:
       - postgresql
       - redis
