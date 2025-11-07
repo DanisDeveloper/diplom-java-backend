@@ -43,11 +43,16 @@ public class ShaderController {
 
     @GetMapping
     public ResponseEntity<List<ShaderResponseDto>> getAllVisibleShaders(
+            @RequestParam(value = "query", required = false, defaultValue = "") String searchQuery,
             @RequestParam Integer page,
             @RequestParam("page_size") Integer pageSize,
-            @RequestParam("sort_option") SortOption sortOption
+            @RequestParam(value = "sort_option", required = false, defaultValue = "NEWEST") SortOption sortOption
     ) {
-        Page<ShaderResponseDto> shadersPage = shaderService.getAllVisibleShaders(page, pageSize, sortOption);
+//        if (searchQuery == null)
+//            searchQuery = "";
+//        if (sortOption == null)
+//            sortOption = SortOption.NEWEST;
+        Page<ShaderResponseDto> shadersPage = shaderService.getAllVisibleShaders(searchQuery, page, pageSize, sortOption);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(shadersPage.getTotalElements()));

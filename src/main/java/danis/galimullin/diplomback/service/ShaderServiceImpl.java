@@ -42,7 +42,7 @@ public class ShaderServiceImpl implements ShaderService {
     }
 
     @Override
-    public Page<ShaderResponseDto> getAllVisibleShaders(Integer page, Integer pageSize, SortOption sortOption) {
+    public Page<ShaderResponseDto> getAllVisibleShaders(String searchQuery, Integer page, Integer pageSize, SortOption sortOption) {
 
         var property = switch (sortOption) {
             case LIKED -> Sort.by("likes").descending();
@@ -53,7 +53,7 @@ public class ShaderServiceImpl implements ShaderService {
         Pageable pageable = PageRequest.of(page, pageSize, property);
 
         return shaderRepository
-                .findAllByVisibility(true, pageable)
+                .findAllByVisibilityAndTitleContainingIgnoreCase(true, searchQuery, pageable)
                 .map(shaderMapper::toShaderResponseDto);
     }
 

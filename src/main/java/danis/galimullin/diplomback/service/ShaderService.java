@@ -9,7 +9,7 @@ import java.security.Principal;
 import java.util.List;
 
 public interface ShaderService {
-    Page<ShaderResponseDto> getAllVisibleShaders(Integer page, Integer pageSize, SortOption sortOption);
+    Page<ShaderResponseDto> getAllVisibleShaders(String searchQuery, Integer page, Integer pageSize, SortOption sortOption);
 
     ShaderResponseDto getShaderById(Long id);
 

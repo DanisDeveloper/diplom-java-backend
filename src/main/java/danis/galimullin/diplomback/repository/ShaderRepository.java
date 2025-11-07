@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface ShaderRepository extends JpaRepository<Shader, Long> {
-    Page<Shader> findAllByVisibility(boolean visibility, Pageable pageable);
+    Page<Shader> findAllByVisibilityAndTitleContainingIgnoreCase(boolean visibility, String searchQuery, Pageable pageable);
 
     @Modifying
     @Query("UPDATE shaders s SET s.views = s.views + 1 WHERE s.id = :shaderId")
