@@ -43,17 +43,21 @@ public class ShaderServiceImpl implements ShaderService {
 
     @Override
     public Page<ShaderResponseDto> getAllVisibleShaders(String searchQuery, Integer page, Integer pageSize, SortOption sortOption) {
-
-        var property = switch (sortOption) {
-            case LIKED -> Sort.by("likes").descending();
-            case COMMENTED -> Sort.by("comments").descending();
-            case VIEWED -> Sort.by("views").descending();
-            default -> Sort.by("createdAt").descending(); // NEWEST
-        };
+        var property = getSort(sortOption);
         Pageable pageable = PageRequest.of(page, pageSize, property);
 
         return shaderRepository
-                .findAllByVisibilityAndTitleContainingIgnoreCase(true, searchQuery, pageable)
+                .findAllByVisibilityAndTitleContainingIgnoreCaseAndDeletedFalse(true, searchQuery, pageable)
+                .map(shaderMapper::toShaderResponseDto);
+    }
+
+    @Override
+    public Page<ShaderResponseDto> getAllUserShaders(String username, String currentUsername, Integer page, Integer pageSize, SortOption sortOption) {
+        var property = getSort(sortOption);
+        Pageable pageable = PageRequest.of(page, pageSize, property);
+
+        return shaderRepository
+                .findAllVisibleOrOwnedBy(username, currentUsername, pageable)
                 .map(shaderMapper::toShaderResponseDto);
     }
 
@@ -129,6 +133,16 @@ public class ShaderServiceImpl implements ShaderService {
             shaderRepository.incrementViews(shaderId);
             redisTemplate.opsForValue().set(key, "1", 24, TimeUnit.HOURS);
         }
+    }
+
+
+    private Sort getSort(SortOption sortOption) {
+        return switch (sortOption) {
+            case LIKED -> Sort.by("likes").descending();
+            case COMMENTED -> Sort.by("comments").descending();
+            case VIEWED -> Sort.by("views").descending();
+            default -> Sort.by("createdAt").descending(); // NEWEST
+        };
     }
 
 }

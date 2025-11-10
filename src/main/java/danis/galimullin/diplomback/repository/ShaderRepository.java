@@ -9,11 +9,20 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface ShaderRepository extends JpaRepository<Shader, Long> {
-    Page<Shader> findAllByVisibilityAndTitleContainingIgnoreCase(boolean visibility, String searchQuery, Pageable pageable);
+    Page<Shader> findAllByVisibilityAndTitleContainingIgnoreCaseAndDeletedFalse(boolean visibility, String searchQuery, Pageable pageable);
+
+    @Query("""
+            SELECT s FROM shaders s
+            WHERE s.user.name = :username
+                AND (s.visibility = true OR s.user.name = :currentUser)
+            """)
+    Page<Shader> findAllVisibleOrOwnedBy(
+            @Param("username") String username,
+            @Param("currentUser") String currentUser,
+            Pageable pageable
+    );
 
     @Modifying
     @Query("UPDATE shaders s SET s.views = s.views + 1 WHERE s.id = :shaderId")

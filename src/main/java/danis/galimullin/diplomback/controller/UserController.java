@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @PatchMapping
-    public void patchUserProfile(@RequestParam String biography, Principal principal) {
+    public void patchUserBiography(@RequestParam String biography, Principal principal) {
         userService.patchBiography(biography, principal.getName());
     }
 

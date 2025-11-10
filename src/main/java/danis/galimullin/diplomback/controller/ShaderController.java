@@ -41,19 +41,32 @@ public class ShaderController {
         return shaderService.getShaderById(id);
     }
 
-    @GetMapping
+    @GetMapping("/public")
     public ResponseEntity<List<ShaderResponseDto>> getAllVisibleShaders(
             @RequestParam(value = "query", required = false, defaultValue = "") String searchQuery,
             @RequestParam Integer page,
             @RequestParam("page_size") Integer pageSize,
             @RequestParam(value = "sort_option", required = false, defaultValue = "NEWEST") SortOption sortOption
     ) {
-//        if (searchQuery == null)
-//            searchQuery = "";
-//        if (sortOption == null)
-//            sortOption = SortOption.NEWEST;
         Page<ShaderResponseDto> shadersPage = shaderService.getAllVisibleShaders(searchQuery, page, pageSize, sortOption);
 
+        return getListResponseEntity(shadersPage);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ShaderResponseDto>> getAllUserShader(
+            @RequestParam("username") String username,
+            @RequestParam(value = "page") Integer page,
+            @RequestParam(value = "page_size") Integer pageSize,
+            @RequestParam(value = "sort_option", required = false, defaultValue = "NEWEST") SortOption sortOption,
+            Principal principal
+    ) {
+        Page<ShaderResponseDto> shadersPage = shaderService.getAllUserShaders(username, principal.getName(), page, pageSize, sortOption);
+
+        return getListResponseEntity(shadersPage);
+    }
+
+    private ResponseEntity<List<ShaderResponseDto>> getListResponseEntity(Page<ShaderResponseDto> shadersPage) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(shadersPage.getTotalElements()));
         headers.add("X-Total-Pages", String.valueOf(shadersPage.getTotalPages()));

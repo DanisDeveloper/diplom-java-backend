@@ -3,12 +3,17 @@ package danis.galimullin.diplomback.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.Where;
 
 import java.util.Date;
 
 @Entity(name = "shaders")
 @Data
 @RequiredArgsConstructor
+@SQLDelete(sql = "UPDATE shaders SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 public class Shader {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +47,7 @@ public class Shader {
 
     @ManyToOne
     private Shader origin;
+
+    @Column(nullable = false)
+    private Boolean deleted = false;
 }
