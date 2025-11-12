@@ -51,5 +51,11 @@ public class GlobalExceptionHandler {
         Map<String, String> body = Map.of("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
+
+    @ExceptionHandler(DifferentPasswordException.class)
+    public ResponseEntity<Map<String, String>> handleFileEmpty(DifferentPasswordException ex) {
+        Map<String, String> body = Map.of("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
 }
 

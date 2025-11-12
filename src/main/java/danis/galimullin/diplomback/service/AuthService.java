@@ -9,4 +9,5 @@ public interface AuthService {
     void registerUser(UserRegisterDto userRegisterDto);
     void loginUser(UserLoginDto userLoginDto, HttpServletRequest request);
     UserStateDto me(String username);
+    void updatePassword(String username, String oldPassword, String newPassword);
 }

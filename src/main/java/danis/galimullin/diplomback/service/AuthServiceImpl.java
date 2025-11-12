@@ -3,8 +3,10 @@ package danis.galimullin.diplomback.service;
 import danis.galimullin.diplomback.dto.user.UserLoginDto;
 import danis.galimullin.diplomback.dto.user.UserStateDto;
 import danis.galimullin.diplomback.dto.user.UserRegisterDto;
+import danis.galimullin.diplomback.exception.DifferentPasswordException;
 import danis.galimullin.diplomback.exception.UserEmailAlreadyExistsException;
 import danis.galimullin.diplomback.exception.UserNameAlreadyExistsException;
+import danis.galimullin.diplomback.exception.UserNotFoundException;
 import danis.galimullin.diplomback.mapper.UserMapper;
 import danis.galimullin.diplomback.model.Role;
 import danis.galimullin.diplomback.model.User;
@@ -29,13 +31,16 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public AuthServiceImpl(UserRepository userRepository,
                            AuthenticationManager authenticationManager,
-                           UserMapper userMapper) {
+                           UserMapper userMapper,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -73,5 +78,13 @@ public class AuthServiceImpl implements AuthService {
         return userMapper.toUserStateDto(optionalUser.get());
     }
 
-
+    @Override
+    @Transactional
+    public void updatePassword(String username, String oldPassword, String newPassword) {
+        User user = userRepository.findByName(username).orElseThrow(UserNotFoundException::new);
+        if(!passwordEncoder.matches(oldPassword, user.getHashedPassword())){
+            throw new DifferentPasswordException();
+        }
+        userRepository.updatePassword(username, passwordEncoder.encode(newPassword));
+    }
 }
