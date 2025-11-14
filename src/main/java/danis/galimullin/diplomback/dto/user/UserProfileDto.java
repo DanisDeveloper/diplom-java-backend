@@ -8,7 +8,8 @@ public record UserProfileDto(
         Date createdAt,
         String avatarUrl,
         String backgroundUrl,
-        String biography
+        String biography,
+        UserStatsDto stats
 ) {
 
 }

@@ -2,11 +2,13 @@ package danis.galimullin.diplomback.service;
 
 import danis.galimullin.diplomback.configuration.FileStorageProperties;
 import danis.galimullin.diplomback.dto.user.UserProfileDto;
+import danis.galimullin.diplomback.dto.user.UserStatsDto;
 import danis.galimullin.diplomback.exception.FileEmptyException;
 import danis.galimullin.diplomback.exception.UserNotFoundException;
 import danis.galimullin.diplomback.mapper.UserMapper;
 import danis.galimullin.diplomback.model.User;
 import danis.galimullin.diplomback.model.UserImageType;
+import danis.galimullin.diplomback.repository.ShaderRepository;
 import danis.galimullin.diplomback.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -25,17 +27,21 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final FileStorageProperties fileStorageProperties;
+    private final ShaderRepository shaderRepository;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, FileStorageProperties fileStorageProperties) {
+    public UserServiceImpl(UserRepository userRepository,
+                           UserMapper userMapper,
+                           FileStorageProperties fileStorageProperties,
+                           ShaderRepository shaderRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.fileStorageProperties = fileStorageProperties;
+        this.shaderRepository = shaderRepository;
     }
 
     @Override
     public UserProfileDto getUserProfileByUsername(String username) {
-        User user = userRepository.findByName(username).orElseThrow(UserNotFoundException::new);
-        return userMapper.toUserProfileDto(user);
+        return userRepository.findProfileWithStats(username).orElseThrow(UserNotFoundException::new);
     }
 
     @Override
@@ -80,6 +86,4 @@ public class UserServiceImpl implements UserService {
         }
 
     }
-
-
 }

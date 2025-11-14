@@ -1,9 +1,6 @@
 package danis.galimullin.diplomback.mapper;
 
-import danis.galimullin.diplomback.dto.user.UserProfileDto;
-import danis.galimullin.diplomback.dto.user.UserRegisterDto;
-import danis.galimullin.diplomback.dto.user.UserInfoForComment;
-import danis.galimullin.diplomback.dto.user.UserStateDto;
+import danis.galimullin.diplomback.dto.user.*;
 import danis.galimullin.diplomback.model.Role;
 import danis.galimullin.diplomback.model.User;
 import danis.galimullin.diplomback.repository.RoleRepository;
@@ -49,17 +46,6 @@ public class UserMapper {
         return new UserStateDto(
                 user.getId(),
                 user.getName()
-        );
-    }
-
-    public UserProfileDto toUserProfileDto(User user) {
-        return new UserProfileDto(
-                user.getId(),
-                user.getName(),
-                user.getCreatedAt(),
-                user.getAvatarUrl(),
-                user.getBackgroundUrl(),
-                user.getBiography()
         );
     }
 }

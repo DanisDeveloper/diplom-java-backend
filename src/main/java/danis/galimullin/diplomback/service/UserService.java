@@ -1,6 +1,7 @@
 package danis.galimullin.diplomback.service;
 
 import danis.galimullin.diplomback.dto.user.UserProfileDto;
+import danis.galimullin.diplomback.dto.user.UserStatsDto;
 import danis.galimullin.diplomback.model.UserImageType;
 import org.springframework.web.multipart.MultipartFile;
 
